@@ -1,9 +1,11 @@
-import { use, useState } from "react";
+import { Children, createContext, useContext, useState } from "react";
+
+export const MusicContext = createContext();
 
 const songs = [
   {
     id: 1,
-    title: "Love me harder",
+    title: "Blinding lights",
     artist: "Weeknd",
     url: "/songs/blindinglights.mp3",
     duration: "3:19",
@@ -59,13 +61,14 @@ const songs = [
   },
 ];
 
-export const useMusic = () => {
+export const MusicProvider = ({ children }) => {
   const [allsongs, setAllSongs] = useState(songs);
   const [currentTrack, setcurrentTrack] = useState(songs[0]);
   const [currentTrackIndex, setcurrentTrackIndex] = useState(0);
   const [currentTime, setcurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isplaying, setisPlaying] = useState(true);
+  const [isplaying, setisPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.5);
 
   const handlePlaySong = (song, index) => {
     setcurrentTrack(song);
@@ -78,6 +81,7 @@ export const useMusic = () => {
       setcurrentTrack(allsongs[nextIndex]);
       return nextIndex;
     });
+    setisPlaying(false);
   };
 
   const prevTrack = () => {
@@ -86,6 +90,7 @@ export const useMusic = () => {
       setcurrentTrack(allsongs[nextIndex]);
       return nextIndex;
     });
+    setisPlaying(false);
   };
 
   const formatTime = (time) => {
@@ -100,21 +105,38 @@ export const useMusic = () => {
   const play = () => setisPlaying(true);
   const pause = () => setisPlaying(false);
 
-  return {
-    allsongs,
-    handlePlaySong,
-    currentTrackIndex,
-    currentTrack,
-    currentTime,
-    setcurrentTime,
-    formatTime,
-    duration,
-    setDuration,
-    nextTrack,
-    prevTrack,
-    isplaying,
-    setisPlaying,
-    play,
-    pause,
-  };
+  return (
+    <MusicContext.Provider
+      value={{
+        allsongs,
+        handlePlaySong,
+        currentTrackIndex,
+        currentTrack,
+        currentTime,
+        setcurrentTime,
+        formatTime,
+        duration,
+        setDuration,
+        nextTrack,
+        prevTrack,
+        isplaying,
+        setisPlaying,
+        play,
+        pause,
+        volume,
+        setVolume,
+      }}
+    >
+      {children}
+    </MusicContext.Provider>
+  );
+};
+
+export const useMusic = () => {
+  const contextValue = useContext(MusicContext);
+  if (!contextValue) {
+    throw new Error("useMusic must be used inside of musicprocider ");
+  }
+
+  return contextValue;
 };

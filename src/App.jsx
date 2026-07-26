@@ -1,25 +1,30 @@
 import { MusicPlayer } from "./components/MusicPlayer";
-import {Allsongs} from "./components/Allsongs"
+import { Allsongs } from "./components/Allsongs";
 import { Playlists } from "./components/Playlists";
+import { MusicProvider } from "./context/MusicContext";
 
-import { BrowserRouter , Route , Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { Navbar } from "./components/Navbar";
 
- function App() {
+function App() {
   return (
     <BrowserRouter>
-    <div className="app">
-      <main className="app-main">
-        <div className="player-section">
-          <MusicPlayer/>
+      <MusicProvider>
+        <div className="app">
+          {<Navbar />}
+          <main className="app-main">
+            <div className="player-section">
+              <MusicPlayer />
+            </div>
+            <div className="content-section">
+              <Routes>
+                <Route path="/" element={<Allsongs />} />
+                <Route path="/playlists" element={<Playlists />} />
+              </Routes>
+            </div>
+          </main>
         </div>
-        <div className="content-section">
-          <Routes>
-            <Route path="/" element={<Allsongs/>} />
-            <Route path="/playlists" element={<Playlists/>} />
-          </Routes>
-        </div>
-      </main>
-    </div>
+      </MusicProvider>
     </BrowserRouter>
   );
 }
