@@ -2,12 +2,11 @@ import { Link, useLocation } from "react-router";
 
 export const Navbar = () => {
   const location = useLocation();
-
   return (
     <nav className="navbar">
       <div className="navbar-brand">
         <Link className="brand-link" to="/">
-          Music Player
+          🎵 Music Player
         </Link>
       </div>
 
@@ -18,7 +17,6 @@ export const Navbar = () => {
         >
           All Songs
         </Link>
-
         <Link
           to="/playlists"
           className={`nav-link ${

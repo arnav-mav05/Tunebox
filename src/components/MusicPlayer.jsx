@@ -1,58 +1,57 @@
-import { useEffect, useRef } from "react";
-import { useMusic } from "../context/MusicContext";
+import { useRef, useEffect } from "react";
+import { useMusic } from "../contexts/MusicContext";
 
 export const MusicPlayer = () => {
   const {
     currentTrack,
     formatTime,
     currentTime,
+    setCurrentTime,
     duration,
     setDuration,
-    setcurrentTime,
     nextTrack,
     prevTrack,
-    isplaying,
-    setisPlaying,
-    play,
+    isPlaying,
     pause,
+    play,
     volume,
     setVolume,
   } = useMusic();
-  const audioref = useRef(null);
+  const audioRef = useRef(null);
 
   const handleTimeChange = (e) => {
-    const audio = audioref.current;
+    const audio = audioRef.current;
     if (!audio) return;
     const newTime = parseFloat(e.target.value);
     audio.currentTime = newTime;
-    setcurrentTime(newTime);
+    setCurrentTime(newTime);
   };
 
-  const handleVolChange = (e) => {
-    const newVol = parseFloat(e.target.value);
-    setVolume(newVol);
+  const handleVolumeChange = (e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
   };
 
   useEffect(() => {
-    const audio = audioref.current;
+    const audio = audioRef.current;
     if (!audio) return;
 
     audio.volume = volume;
   }, [volume]);
 
   useEffect(() => {
-    const audio = audioref.current;
+    const audio = audioRef.current;
     if (!audio) return;
 
-    if (isplaying) {
+    if (isPlaying) {
       audio.play().catch((err) => console.error(err));
     } else {
       audio.pause();
     }
-  }, [isplaying]);
+  }, [isPlaying]);
 
   useEffect(() => {
-    const audio = audioref.current;
+    const audio = audioRef.current;
     if (!audio) return;
 
     const handleLoadedMetadata = () => {
@@ -60,7 +59,7 @@ export const MusicPlayer = () => {
     };
 
     const handleTimeUpdate = () => {
-      setcurrentTime(audio.currentTime);
+      setCurrentTime(audio.currentTime);
     };
 
     const handleEnded = () => {
@@ -74,26 +73,27 @@ export const MusicPlayer = () => {
 
     return () => {
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("canplay", handleLoadedMetadata);
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [setDuration, setcurrentTime, currentTrack, nextTrack]);
+  }, [setDuration, setCurrentTime, currentTrack, nextTrack]);
 
   useEffect(() => {
-    const audio = audioref.current;
+    const audio = audioRef.current;
     if (!audio) return;
 
     audio.load();
-    setcurrentTime(0);
+    setCurrentTime(0);
     setDuration(0);
-  }, [currentTrack, setcurrentTime, setDuration]);
+  }, [currentTrack, setCurrentTime, setDuration]);
 
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="music-player">
       <audio
-        ref={audioref}
+        ref={audioRef}
         src={currentTrack.url}
         preload="metadata"
         crossOrigin="anonymous"
@@ -125,9 +125,9 @@ export const MusicPlayer = () => {
         </button>
         <button
           className="control-btn play-btn"
-          onClick={() => (isplaying ? pause() : play())}
+          onClick={() => (isPlaying ? pause() : play())}
         >
-          {isplaying ? "⏸" : "▶"}
+          {isPlaying ? "⏸" : "▶"}
         </button>
         <button className="control-btn" onClick={nextTrack}>
           ⏭
@@ -142,7 +142,7 @@ export const MusicPlayer = () => {
           max="1"
           step="0.1"
           className="volume-bar"
-          onChange={handleVolChange}
+          onChange={handleVolumeChange}
           value={volume}
         />
       </div>

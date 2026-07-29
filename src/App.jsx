@@ -1,9 +1,9 @@
 import { MusicPlayer } from "./components/MusicPlayer";
-import { Allsongs } from "./components/Allsongs";
+import { AllSongs } from "./components/AllSongs";
 import { Playlists } from "./components/Playlists";
-import { MusicProvider } from "./context/MusicContext";
 
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router";
+import { MusicProvider } from "./contexts/MusicContext";
 import { Navbar } from "./components/Navbar";
 
 function App() {
@@ -11,14 +11,14 @@ function App() {
     <BrowserRouter>
       <MusicProvider>
         <div className="app">
-          {<Navbar />}
+          <Navbar />
           <main className="app-main">
             <div className="player-section">
               <MusicPlayer />
             </div>
             <div className="content-section">
               <Routes>
-                <Route path="/" element={<Allsongs />} />
+                <Route path="/" element={<AllSongs />} />
                 <Route path="/playlists" element={<Playlists />} />
               </Routes>
             </div>
